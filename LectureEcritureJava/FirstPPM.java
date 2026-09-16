@@ -15,7 +15,7 @@ public class FirstPPM {
             // Première ligne : rouge, vert, bleu
             writer.write("255 0 0 0 255 0 0 0 255\n");
             // Deuxième ligne : jaune, blanc, noir
-            writer.write("255 0 0 0 255 0 0 0 255\n");
+            writer.write("255 255 0 255 255 255 0 0 0\n");
 
             writer.close(); // Fermeture du fichier
 
