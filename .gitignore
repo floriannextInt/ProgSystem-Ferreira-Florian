@@ -1,0 +1,2 @@
+echo "*.class" >> .gitignore
+echo "*.jar" >> .gitignore
