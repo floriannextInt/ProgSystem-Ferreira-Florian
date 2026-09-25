@@ -68,20 +68,91 @@ public class Utils {
 	
 	public static int writeString(byte[] memory, int offset, String str, int maxLength) {
 		
-		// TODO:
-		// 1. Convertir la chaîne en octets.
-		// 2. Copier les octets sans dépasser maxLength.
-		// 3. Nettoyer le reste de la zone avec des zéros.
+		if (maxLength < 0 || maxLength > 16) {
+			throw new IllegalArgumentException("maxLength doit etre entre 0 et 16");
+		}
+
+		byte[] text = str.getBytes(StandardCharsets.UTF_8);
+		
+		if (maxLength > 0) memory[offset] = text.length > 0 ? text[0] : 0;
+		if (maxLength > 1) memory[offset + 1] = text.length > 1 ? text[1] : 0;
+		if (maxLength > 2) memory[offset + 2] = text.length > 2 ? text[2] : 0;
+		if (maxLength > 3) memory[offset + 3] = text.length > 3 ? text[3] : 0;
+		if (maxLength > 4) memory[offset + 4] = text.length > 4 ? text[4] : 0;
+		if (maxLength > 5) memory[offset + 5] = text.length > 5 ? text[5] : 0;
+		if (maxLength > 6) memory[offset + 6] = text.length > 6 ? text[6] : 0;
+		if (maxLength > 7) memory[offset + 7] = text.length > 7 ? text[7] : 0;
+		if (maxLength > 8) memory[offset + 8] = text.length > 8 ? text[8] : 0;
+		if (maxLength > 9) memory[offset + 9] = text.length > 9 ? text[9] : 0;
+		if (maxLength > 10) memory[offset + 10] = text.length > 10 ? text[10] : 0;
+		if (maxLength > 11) memory[offset + 11] = text.length > 11 ? text[11] : 0;
+		if (maxLength > 12) memory[offset + 12] = text.length > 12 ? text[12] : 0;
+		if (maxLength > 13) memory[offset + 13] = text.length > 13 ? text[13] : 0;
+		if (maxLength > 14) memory[offset + 14] = text.length > 14 ? text[14] : 0;
+		if (maxLength > 15) memory[offset + 15] = text.length > 15 ? text[15] : 0;
 
 		return maxLength;
 	}
 
 	public static String readString(byte[] memory, int offset, int maxLength) {
 		
-		// TODO:
-		// Lire jusqu'au premier octet nul
-		// ou jusqu'à maxLength.
+		if (maxLength < 0 || maxLength > 16) {
+			throw new IllegalArgumentException("maxLength doit être entre 0 et 16");
+		}
+		
+		int position = 0;
 
-		return "";
+		byte p0 = maxLength > 0 ? memory[offset] : 0;
+		if (p0 != 0) position = 1;
+
+		byte p1 = maxLength > 1 && position == 1 ? memory[offset + 1] : 0;
+		if (p1 != 0) position = 2;
+
+		byte p2 = maxLength > 2 && position == 2 ? memory[offset + 2] : 0;
+		if (p2 != 0) position = 3;
+
+		byte p3 = maxLength > 3 && position == 3 ? memory[offset + 3] : 0;
+		if (p3 != 0) position = 4;
+
+		byte p4 = maxLength > 4 && position == 4 ? memory[offset + 4] : 0;
+		if (p4 != 0) position = 5;
+
+		byte p5 = maxLength > 5 && position == 5 ? memory[offset + 5] : 0;
+		if (p5 != 0) position = 6;
+
+		byte p6 = maxLength > 6 && position == 6 ? memory[offset + 6] : 0;
+		if (p6 != 0) position = 7;
+
+		byte p7 = maxLength > 7 && position == 7 ? memory[offset + 7] : 0;
+		if (p7 != 0) position = 8;
+
+		byte p8 = maxLength > 8 && position == 8 ? memory[offset + 8] : 0;
+		if (p8 != 0) position = 9;
+
+		byte p9 = maxLength > 9 && position == 9 ? memory[offset + 9] : 0;
+		if (p9 != 0) position = 10;
+
+		byte p10 = maxLength > 10 && position == 10 ? memory[offset + 10] : 0;
+		if (p10 != 0) position = 11;
+
+		byte p11 = maxLength > 11 && position == 11 ? memory[offset + 11] : 0;
+		if (p11 != 0) position = 12;
+
+		byte p12 = maxLength > 12 && position == 12 ? memory[offset + 12] : 0;
+		if (p12 != 0) position = 13;
+
+		byte p13 = maxLength > 13 && position == 13 ? memory[offset + 13] : 0;
+		if (p13 != 0) position = 14;
+
+		byte p14 = maxLength > 14 && position == 14 ? memory[offset + 14] : 0;
+		if (p14 != 0) position = 15;
+
+		byte p15 = maxLength > 15 && position == 15 ? memory[offset + 15] : 0;
+		if (p15 != 0) position = 16;
+
+		byte[] text = {p0, p1, p2, p3, p4, p5, p6, p7,
+				p8, p9, p10, p11, p12, p13, p14, p15};
+
+		return new String(text, 0, position, StandardCharsets.UTF_8);
 	}
 }
