@@ -155,4 +155,53 @@ public class Utils {
 
 		return new String(text, 0, position, StandardCharsets.UTF_8);
 	}
+	
+	public boolean setBlockUsed(
+        int blockNumber,
+        boolean used) {
+
+    if (blockNumber < 0 ||
+        blockNumber >= NUM_BLOCKS) {
+        return false;
+    }
+
+    int byteIndex = blockNumber / 8;
+    int bitPosition = blockNumber % 8;
+    int offset = BITMAP_OFFSET + byteIndex;
+
+    if (used) {
+        memory[offset] |= mask;
+    } else {
+        memory[offset] &= ~mask;
+    }
+
+    return true;
+	}
+
+	public int isBlockUsed(int blockNumber) {
+
+		if (blockNumber < 0 ||
+			blockNumber >= NUM_BLOCKS) {
+			return -1;
+		}
+
+		int byteIndex = blockNumber / 8;
+		int bitPosition = blockNumber % 8;
+		int offset = BITMAP_OFFSET + byteIndex;
+		int mask = 1 << bitPosition;
+
+		return -1;
+	}
+
+	public int allocateBlock() {
+
+		// TODO:
+		// Parcourir les blocs de données :
+		// 129 .. NUM_BLOCKS - 1.
+		//
+		// Retourner le premier bloc libre.
+		// Le marquer immédiatement comme utilisé.
+
+		return -1;
+	}
 }
