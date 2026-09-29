@@ -90,11 +90,12 @@ public class MemoryManager {
     int byteIndex = blockNumber / 8;
     int bitPosition = blockNumber % 8;
     int offset = BITMAP_OFFSET + byteIndex;
+	int masque = 1;
 
     if (used) {
-        memory[offset] |= mask;
+        octet |= masque;
     } else {
-        memory[offset] &= ~mask;
+        octet &= ~masque;
     }
 
     return true;
@@ -109,8 +110,7 @@ public class MemoryManager {
 
 		int byteIndex = blockNumber / 8;
 		int bitPosition = blockNumber % 8;
-		int offset = BITMAP_OFFSET + byteIndex;
-		int mask = 1 << bitPosition;
+		
 
 		return -1;
 	}
@@ -127,3 +127,6 @@ public class MemoryManager {
 		return -1;
 	}
 }
+
+
+//return (data >> byte.position) & 0x1;
