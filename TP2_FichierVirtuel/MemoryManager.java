@@ -130,3 +130,20 @@ public class MemoryManager {
 
 
 //return (data >> byte.position) & 0x1;
+
+//dans la classe Inode : 
+
+// TODO
+// memoryManager.INODE_TABLE_SIZE + (inodeNumber * INODE_SIZE);
+
+// TODO
+// byte[] mem = memoryManager.getFilesysteme();
+// return Utils.readInt(mem, getInodeOffset) + 4;
+
+// TODO
+// byte[] mem = memoryManager.getFilesysteme();
+// return Utils.readInt(mem, getInodeOffset) + 8;
+
+// TODO
+// byte[] mem = memoryManager.getFilesysteme();
+// 
