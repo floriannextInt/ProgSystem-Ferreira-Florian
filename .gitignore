@@ -1,2 +1,6 @@
+*.class
+*.jar
+*.o
+*.obj
 echo "*.class" >> .gitignore
 echo "*.jar" >> .gitignore
