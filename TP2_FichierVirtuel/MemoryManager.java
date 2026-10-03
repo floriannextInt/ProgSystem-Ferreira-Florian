@@ -92,11 +92,11 @@ public class MemoryManager {
     int offset = BITMAP_OFFSET + byteIndex;
 	int masque = 1;
 
-    if (used) {
-        octet |= masque;
-    } else {
-        octet &= ~masque;
-    }
+	if (used) {
+		current = (byte) (current | (1 << bitPosition));
+	} else if (!used) {
+		current = (byte) (current & ~(1 << bitPosition));
+	}
 
     return true;
 	}
@@ -110,20 +110,19 @@ public class MemoryManager {
 
 		int byteIndex = blockNumber / 8;
 		int bitPosition = blockNumber % 8;
+		int offset = BITMAP_OFFSET + byteIndex;
 		
-
-		return -1;
+		return ((memory[offset] >> bitPosition) & 1) == 1;
 	}
 
 	public int allocateBlock() {
-
-		// TODO:
-		// Parcourir les blocs de données :
-		// 129 .. NUM_BLOCKS - 1.
-		//
-		// Retourner le premier bloc libre.
-		// Le marquer immédiatement comme utilisé.
-
+		
+	for (int i = 129; i < NUM_BLOCKS; i++) {
+		if (!isBlockUsed(i)) {
+			setBlockUsed(i, true);
+				return i;
+		}
+	}
 		return -1;
 	}
 }
