@@ -41,7 +41,7 @@ public class MemoryManager {
 		memory[BITMAP_OFFSET + 13] = (byte) 0xFF;
 		memory[BITMAP_OFFSET + 14] = (byte) 0xFF;
 		memory[BITMAP_OFFSET + 15] = (byte) 0xFF;
-		memory[BITMAP_OFFSET + 16] = (byte) 0x01;
+		memory[BITMAP_OFFSET + 16] = (byte) 0x00;
 	}
 
 	private void writeSuperblock() {
@@ -72,7 +72,6 @@ public class MemoryManager {
                 SUPERBLOCK_OFFSET + 28,
                 MAX_INODES);
     }
-	}
 
 	public byte[] getFilesystemMemory() {
 		return memory;
@@ -90,13 +89,15 @@ public class MemoryManager {
     int byteIndex = blockNumber / 8;
     int bitPosition = blockNumber % 8;
     int offset = BITMAP_OFFSET + byteIndex;
-	int masque = 1;
+	byte octet = memory[offset];
 
 	if (used) {
-		current = (byte) (current | (1 << bitPosition));
-	} else if (!used) {
-		current = (byte) (current & ~(1 << bitPosition));
+		octet = (byte) (octet | (1 << bitPosition));
+	} else {
+		octet = (byte) (octet & ~(1 << bitPosition));
 	}
+	
+	memory[offset] = octet;
 
     return true;
 	}
@@ -112,37 +113,17 @@ public class MemoryManager {
 		int bitPosition = blockNumber % 8;
 		int offset = BITMAP_OFFSET + byteIndex;
 		
-		return ((memory[offset] >> bitPosition) & 1) == 1;
+		return ((memory[offset] >> bitPosition) & 0x1);
 	}
 
 	public int allocateBlock() {
 		
-	for (int i = 129; i < NUM_BLOCKS; i++) {
-		if (!isBlockUsed(i)) {
-			setBlockUsed(i, true);
-				return i;
+		for (int i = 129; i < NUM_BLOCKS; i++) {
+			if (isBlockUsed(i) == 0) {
+				setBlockUsed(i, true);
+					return i;
+			}
 		}
-	}
 		return -1;
 	}
 }
-
-
-//return (data >> byte.position) & 0x1;
-
-//dans la classe Inode : 
-
-// TODO
-// memoryManager.INODE_TABLE_SIZE + (inodeNumber * INODE_SIZE);
-
-// TODO
-// byte[] mem = memoryManager.getFilesysteme();
-// return Utils.readInt(mem, getInodeOffset) + 4;
-
-// TODO
-// byte[] mem = memoryManager.getFilesysteme();
-// return Utils.readInt(mem, getInodeOffset) + 8;
-
-// TODO
-// byte[] mem = memoryManager.getFilesysteme();
-// 
