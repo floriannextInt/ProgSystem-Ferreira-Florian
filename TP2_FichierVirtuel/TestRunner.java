@@ -11,7 +11,9 @@ public class TestRunner {
 		testStep8();
 		testStep9();
 		testStep9_512();
+		testStep9_523();
 		testStep9_Overflow();
+		testStep10();
 		System.out.println("=== TOUS LES TESTS SONT TERMINÉS ===");
     }
 
@@ -569,8 +571,32 @@ public class TestRunner {
 
 		System.out.println("[OK] Test dépassement validé !");
 	}
+	
+	public static void testStep10() {
+		System.out.println("=== TEST SUPPRESSION DE FICHIER ===");
 
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
 
+		assert vfs.createFile(
+				"/",
+				"fichierAsupprimer.txt");
 
+		byte[] data =
+				new byte[512];
 
+		boolean writeOk =
+				vfs.writeFile(0, data);
+				
+		assert writeOk :
+				"L'écriture initiale doit réussir";
+
+		boolean deleteOk =
+				vfs.deleteFile(0);
+
+		assert deleteOk :
+				"La suppression doit réussir et libérer les blocs et l'inode";
+
+		System.out.println("[OK] Test suppression validé !");
+	}
 }
