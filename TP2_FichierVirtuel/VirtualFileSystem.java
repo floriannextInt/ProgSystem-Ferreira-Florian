@@ -1,4 +1,6 @@
 import java.util.*;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class VirtualFileSystem {
 
@@ -192,5 +194,24 @@ public class VirtualFileSystem {
 		inode.writeToMemory(-1, 0, 0L, 0L, emptyPointers, 0, (short) 0, 0);
 
 		return true;
+	}
+	
+	public boolean writeExternalFile(String filename) {
+
+		StringBuilder builder = new StringBuilder();
+		try (FileReader reader = new FileReader(filename)) {
+			char[] buffer = new char[1024];
+			int count;
+			while ((count = reader.read(buffer)) != -1) {
+				builder.append( buffer, 0, count);
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		byte[] data = builder.toString().getBytes();
+		if (!createFile("/", "external.txt")) {
+			return false;
+		}
+		return writeFile(0, data);
 	}
 }

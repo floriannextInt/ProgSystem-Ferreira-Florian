@@ -1,0 +1,42 @@
+Question 1 :
+Il est necéssaire de définir explicitement une convention tel que big-endian
+pour définir une séquence d'ordonnancement des octets car un int en fait 4.
+Si writeInt utilise big-endian mais readInt utilise little-endian
+alors les octet seront lus à l'envers.
+
+Question 2 :
+Un byte et signé de -128 à 127 alors qu'un int et signé de -2,1 Millards à 2,1 Millards.
+Lors de la conversion en int, java fait un extension de signe, donc on utilise 0xFF.
+(on rempli de 1 si le bit de poids fort et 1)
+0xFF masque les 24 bits de poids fort pour conserve que les 8 bits de l'octet.
+
+Question 3 :
+Ce test peut masquer des test symétrique qui s'annule comme des valaurs limites
+comme Integer.MAX_VALUE. L'inspection direct des données permet de validée la
+structure de donnée exact.
+
+Question 4 :
+Un bit map utilise 1 bit par bloc alors qu'un entier en utilise 32.
+Si N est le nombre total de bloc, alors un bitmap et égale à N/8.
+
+Question 5 :
+Car VFS utilise des adresses mémoire fixe. Si la position du bitmap
+changeait sans que les méthodes qui l’utilisent soient modifiées alors
+cela écrirait par dessus d'autres structures.
+
+Question 6 :
+Séparer les métadonnées et les données permet de faire en sorte que la
+structure de l'inode garde sa taille fixe dans la table d'inode. L'inode agis
+comme un index, car elle a tout les métadonnées et les pointeurs d'adresses vers
+les données du fichier. (sans les stocker)
+
+Question 7 :
+les bloc 0 à 128 sont déjà reservé par le système du VFS. Si la recherche
+commençait au bloc 0, alors on réécrirait des données sur des structure
+importante du VFS.
+
+Question 8 :
+Deux systèmes peuvent posséder exactement le même nombre de blocs libres
+qui présente des niveaux de fragmentation différents :
+	1: [0][0][0][0][1][1][1][1]
+	2: [0][1][0][1][0][1][0][1]
