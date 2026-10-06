@@ -9,6 +9,9 @@ public class TestRunner {
 		testStep6();
 		testStep7();
 		testStep8();
+		testStep9();
+		testStep9_512();
+		testStep9_Overflow();
 		System.out.println("=== TOUS LES TESTS SONT TERMINÉS ===");
     }
 
@@ -348,4 +351,226 @@ public class TestRunner {
 
 		System.out.println("[OK] Étape 8 validée !");
 	}
+	
+	public static void testStep9() {
+		System.out.println("=== TEST ÉTAPE 9 : Entrées/Sorties Fichier ===");
+
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
+
+		assert vfs.createFile(
+				"/",
+				"test.txt");
+
+		String text =
+				"Contenu de test du système de fichiers";
+
+		byte[] original =
+				text.getBytes();
+
+		boolean writeOk =
+				vfs.writeFile(0, original);
+
+		assert writeOk :
+				"Erreur d'écriture";
+
+		Inode inode =
+				new Inode(
+						vfs.getMemoryManager(),
+						0);
+
+		assert inode.getFileSize()
+				== original.length :
+				"Taille d'inode incorrecte";
+
+		byte[] readBytes =
+				vfs.readFile(0);
+
+		assert readBytes != null :
+				"Buffer lu nul";
+
+		assert readBytes.length
+				== original.length :
+				"Longueur lue incorrecte";
+
+		for (int i = 0; i < original.length; i++) {
+			assert readBytes[i] == original[i] :
+					"Octet incorrect à l'indice " + i;
+		}
+
+		System.out.println("[OK] Étape 9 validée !");
+	}
+	
+	public static void testStep9_512() {
+		System.out.println("=== TEST FICHIER DE 512 OCTETS ===");
+
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
+
+		assert vfs.createFile(
+				"/",
+				"fichier512.txt");
+
+		byte[] data =
+				new byte[512];
+
+		for (int i = 0; i < data.length; i++) {
+			data[i] = (byte) i;
+		}
+
+		boolean writeOk =
+				vfs.writeFile(0, data);
+
+		assert writeOk :
+				"Erreur d'écriture du fichier de 512 octets";
+
+		Inode inode =
+				new Inode(
+						vfs.getMemoryManager(),
+						0);
+
+		assert inode.getFileSize() == 512 :
+				"La taille de l'inode doit être 512";
+
+		int[] blockPointers =
+				inode.getDirectPointers();
+
+		assert blockPointers[0] != 0 :
+				"Un bloc doit être utilisé";
+
+		assert blockPointers[1] == 0 :
+				"Un seul pointeur direct doit être utilisé";
+
+		byte[] memory =
+				vfs.getMemoryManager()
+						.getFilesystemMemory();
+
+		int blockOffset =
+				blockPointers[0]
+				* MemoryManager.BLOCK_SIZE;
+
+		for (int i = 0; i < 512; i++) {
+			assert memory[blockOffset + i] == data[i] :
+					"Octet incorrect dans le bloc à l'indice " + i;
+		}
+
+		byte[] readData =
+				vfs.readFile(0);
+
+		assert readData.length == 512 :
+				"La longueur lue doit être 512";
+
+		for (int i = 0; i < 512; i++) {
+			assert readData[i] == data[i] :
+					"Octet lu incorrect à l'indice " + i;
+		}
+
+		System.out.println("[OK] Test 512 octets validé !");
+	}
+	
+	public static void testStep9_523() {
+		System.out.println("=== TEST FICHIER DE 523 OCTETS ===");
+
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
+
+		assert vfs.createFile(
+				"/",
+				"fichier523.txt");
+
+		byte[] data =
+				new byte[523];
+
+		for (int i = 0; i < data.length; i++) {
+			data[i] = (byte) i;
+		}
+
+		boolean writeOk =
+				vfs.writeFile(0, data);
+
+		assert writeOk :
+				"Erreur d'écriture du fichier de 523 octets";
+
+		Inode inode =
+				new Inode(
+						vfs.getMemoryManager(),
+						0);
+
+		assert inode.getFileSize() == 523 :
+				"La taille de l'inode doit être 523";
+
+		int[] blockPointers =
+				inode.getDirectPointers();
+
+		assert blockPointers[0] != 0 :
+				"Le premier bloc doit être utilisé";
+
+		assert blockPointers[1] != 0 :
+				"Le deuxième bloc doit être utilisé";
+
+		byte[] memory =
+				vfs.getMemoryManager()
+						.getFilesystemMemory();
+
+		int firstBlockOffset =
+				blockPointers[0]
+				* MemoryManager.BLOCK_SIZE;
+
+		int secondBlockOffset =
+				blockPointers[1]
+				* MemoryManager.BLOCK_SIZE;
+
+		// Vérifier les 512 premiers octets.
+		for (int i = 0; i < 512; i++) {
+			assert memory[firstBlockOffset + i] == data[i] :
+					"Octet incorrect dans le premier bloc à l'indice " + i;
+		}
+
+		// Vérifier le dernier octet.
+		assert memory[secondBlockOffset] == data[512] :
+				"Le dernier octet doit être dans le deuxième bloc";
+
+		byte[] readData =
+				vfs.readFile(0);
+
+		assert readData.length == 523 :
+				"La longueur lue doit être 523";
+
+		for (int i = 0; i < 523; i++) {
+			assert readData[i] == data[i] :
+					"Octet lu incorrect à l'indice " + i;
+		}
+
+		System.out.println("[OK] Test 523 octets validé !");
+	}
+	
+	public static void testStep9_Overflow() {
+		System.out.println("=== TEST DÉPASSEMENT DE 10 BLOCS ===");
+
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
+
+		assert vfs.createFile(
+				"/",
+				"fichierTropGrand.txt");
+
+		byte[] data =
+				new byte[5121];
+
+		for (int i = 0; i < data.length; i++) {
+			data[i] = (byte) i;
+		}
+
+		boolean writeOk =
+				vfs.writeFile(0, data);
+
+		assert !writeOk :
+				"L'écriture doit être refusée pour plus de 10 blocs";
+
+		System.out.println("[OK] Test dépassement validé !");
+	}
+
+
+
+
 }

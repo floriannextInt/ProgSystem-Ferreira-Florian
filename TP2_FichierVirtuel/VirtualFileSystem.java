@@ -72,4 +72,100 @@ public class VirtualFileSystem {
     public MemoryManager getMemoryManager() {
         return memoryManager;
     }
+	
+	public boolean writeFile(
+        int inodeNum,
+        byte[] data) {
+
+		int blocksNeeded =
+				(data.length
+				+ MemoryManager.BLOCK_SIZE - 1)
+				/ MemoryManager.BLOCK_SIZE;
+
+		if (blocksNeeded > Inode.DIRECT_POINTERS) {
+			return false;
+		}
+
+		int[] blockPointers =
+				new int[Inode.DIRECT_POINTERS];
+
+		for (int i = 0; i < blocksNeeded; i++) {
+			int blockNumber = memoryManager.allocateBlock();
+			if (blockNumber == -1) {
+				return false;
+			}
+			blockPointers[i] = blockNumber;
+		}
+
+		byte[] memory =
+				memoryManager.getFilesystemMemory();
+
+		int bytesRemaining =
+				data.length;
+
+		int dataSrcOffset = 0;
+
+		for (int i = 0; i < blocksNeeded; i++) {
+			int bytesToCopy = Math.min(bytesRemaining, MemoryManager.BLOCK_SIZE);
+			int blockNumber = blockPointers[i];
+			int blockOffset = blockNumber * MemoryManager.BLOCK_SIZE;
+			for (int j = 0; j < bytesToCopy; j++) {
+				memory[blockOffset + j] =
+						data[dataSrcOffset + j];
+			}
+
+			bytesRemaining -= bytesToCopy;
+			dataSrcOffset += bytesToCopy;
+		}
+
+		Inode inode = new Inode(memoryManager, inodeNum);
+		inode.writeToMemory(1, data.length, System.currentTimeMillis(), System.currentTimeMillis(), blockPointers, 0, (short) 0, 1);
+
+		return true;
+	}
+	
+	public byte[] readFile(int inodeNum) {
+
+		Inode inode =
+				new Inode(memoryManager, inodeNum);
+
+		int fileSize =
+				inode.getFileSize();
+
+		if (fileSize == 0) {
+			return new byte[0];
+		}
+
+		byte[] fileData =
+				new byte[fileSize];
+
+		byte[] memory =
+				memoryManager.getFilesystemMemory();
+
+		int[] blockPointers =
+				inode.getDirectPointers();
+
+		int bytesrestant = fileSize;
+
+		int dataDestOffset = 0;
+
+		int blocksNeeded = (fileSize + MemoryManager.BLOCK_SIZE - 1) / MemoryManager.BLOCK_SIZE;
+
+		for (int i = 0; i < blocksNeeded; i++) {
+
+			int bytesACopier = Math.min(bytesrestant, MemoryManager.BLOCK_SIZE);
+
+			int blockNumber = blockPointers[i];
+
+			int blockOffset = blockNumber * MemoryManager.BLOCK_SIZE;
+
+			for (int j = 0; j < bytesACopier; j++) {
+				fileData[dataDestOffset + j] =
+						memory[blockOffset + j];
+			}
+			bytesrestant -= bytesACopier;
+			dataDestOffset += bytesACopier;
+		}
+		return fileData;
+	}
 }
