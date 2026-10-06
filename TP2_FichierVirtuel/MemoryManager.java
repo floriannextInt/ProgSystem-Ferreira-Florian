@@ -42,6 +42,11 @@ public class MemoryManager {
 		memory[BITMAP_OFFSET + 14] = (byte) 0xFF;
 		memory[BITMAP_OFFSET + 15] = (byte) 0xFF;
 		memory[BITMAP_OFFSET + 16] = (byte) 0x00;
+		
+		for (int i = 0; i < MAX_INODES; i++) {
+			int offset = INODE_TABLE_OFFSET + (i * INODE_SIZE);
+			Utils.writeInt(memory, offset, -1);
+		}
 	}
 
 	private void writeSuperblock() {

@@ -15,7 +15,7 @@ public class Inode {
     }
 
     public int getInodeOffset() {
-        int offset = MemoryManager.INODE_TABLE_OFFSET + (inodeNumber * MemoryManager.INODE_SIZE);
+        int offset = MemoryManager.INODE_TABLE_OFFSET + (inodeNumber * Inode.INODE_SIZE);
         return offset;
     }
 
