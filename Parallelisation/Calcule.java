@@ -22,6 +22,7 @@ public class Calcule extends Thread {
 		}
 	}
 	
+	// Réduction
 	public getResultat() {
 		return this.resultat;
 	}
