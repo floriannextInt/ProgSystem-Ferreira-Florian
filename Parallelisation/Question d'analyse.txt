@@ -1,0 +1,13 @@
+Question d'analyse : 
+
+Question 1 :
+Si le mutex est pris avant d’attendre une place libre, un producteur peut bloquer
+les consommateurs en gardant le buffer verrouillé.
+
+Question 2 :
+Oui, si tout se termine normalement, chaque produit consommé correspond à un produit
+créé et les compteurs s’équilibrent.
+
+Question 3 :
+Le système peut se bloquer si le buffer est plein ou vide, si les threads s’arrêtent
+sans libérer leurs sémaphores, ou si le mutex est gardé pendant une attente.

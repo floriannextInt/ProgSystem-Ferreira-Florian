@@ -14,6 +14,8 @@ public class CompteurDangereux {
         public void run() {
             for (int i = 0; i < nombreIncrements; i++) {
                 // TODO: Expliquer pourquoi cette ligne pose problème
+				// compteurGlobal est partgée et mofifier par tout les threads
+				// Ce double accès a l'écriture peut provoquer une erreur
                 compteurGlobal++;  // RACE CONDITION ICI !
             }
             System.out.println(nom + " terminé. Compteur vu : " + compteurGlobal);
